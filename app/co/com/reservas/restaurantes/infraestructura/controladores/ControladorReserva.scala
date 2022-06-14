@@ -58,9 +58,13 @@ class ControladorReserva @Inject() (val controllerComponents: ControllerComponen
         case Left(value) => Future.successful(BadRequest(value.toString))
         case Right(value) => ProcesarReserva.crearReserva(value)
           .map(reserva => {
-            val reservaDTO : ReservaDTO = reserva
-            val json = Json.obj("data" -> reservaDTO)
-            Ok(json)
+            if(reserva.isEmpty) {
+              NotFound("Ya existe una reserva con ese id")
+            }else{
+              val reservaDTO : ReservaDTO = reserva.get
+              val json = Json.obj("data" -> reservaDTO)
+              Ok(json)
+            }
             }).recover{
           case ex =>
             logger.error("Ocurrio un error en el servicio Logger", ex)

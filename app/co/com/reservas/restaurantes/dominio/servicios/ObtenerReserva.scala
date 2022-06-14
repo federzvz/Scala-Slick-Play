@@ -8,8 +8,12 @@ import scala.concurrent.Future
 
 trait ObtenerReserva {
 
-  def obtenerReserva(id : String) : Future[Reserva] = Future{
-    Reserva("111","Nombre", new Date().toString, Reservada())
+  def obtenerReserva(id : String) : Future[Option[Reserva]] = Future{
+    if(id == "111"){
+      Some(Reserva("111","Nombre", new Date().toString, Reservada()))
+    }else{
+      None
+    }
   }
 
 }

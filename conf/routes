@@ -3,4 +3,5 @@
 # https://www.playframework.com/documentation/latest/ScalaRouting
 # ~~~~
 
-GET     /api/reservas/:id           co.com.reservas.restaurantes.infraestructura.controladores.ControladorReserva.obtenerReserva(id: String)
+GET     /api/reservas/:id          co.com.reservas.restaurantes.infraestructura.controladores.ControladorReserva.obtenerReserva(id: String)
+POST     /api/reservas            co.com.reservas.restaurantes.infraestructura.controladores.ControladorReserva.crearReserva

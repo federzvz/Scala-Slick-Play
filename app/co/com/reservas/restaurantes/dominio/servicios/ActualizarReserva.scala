@@ -8,7 +8,7 @@ import scala.concurrent.Future
 
 trait ActualizarReserva {
 
-  def eliminarReserva(id : String, reserva : Reserva) : Future[Reserva] = Future{
+  def actualizarReserva(id : String, reserva : Reserva) : Future[Reserva] = Future{
     Reserva("111","Nombre", new Date().toString, Reservada())
   }
 

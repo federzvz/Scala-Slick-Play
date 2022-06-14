@@ -1,21 +1,89 @@
 package co.com.reservas.restaurantes.infraestructura.controladores
 
-import co.com.reservas.restaurantes.dominio.servicios.ObtenerReserva
+import co.com.reservas.restaurantes.dominio.servicios.{ActualizarReserva, EliminarReserva, ObtenerReserva, ProcesarReserva}
 import co.com.reservas.restaurantes.infraestructura.controladores.dto.ReservaDTO
+import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{BaseController, ControllerComponents}
 
-import javax.inject.Singleton
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 @Singleton
-class ControladorReserva(val controllerComponents: ControllerComponents) extends BaseController {
+class ControladorReserva @Inject() (val controllerComponents: ControllerComponents) extends BaseController {
+
+  val logger : Logger = Logger(this.getClass.getName)
+
   def obtenerReserva(id : String) = Action.async{
     ObtenerReserva.obtenerReserva(id)
+      .map(reservaOpt => {
+        reservaOpt.map(reserva => {
+          val reservaDTO : ReservaDTO = reserva
+          val json = Json.obj("data" -> reservaDTO)
+          Ok(json)
+        }).getOrElse(NotFound("No se encontro la reserva"))
+    }).recover{
+      case ex =>
+        logger.error("Ocurrio un error en el servicio Logger", ex)
+        InternalServerError("Ha ocurrido un error interno.")
+    }
+  }
+
+  def eliminarReserva(id : String) = Action.async{
+
+    EliminarReserva.eliminarReserva(id)
       .map(reserva => {
         val reservaDTO : ReservaDTO = reserva
-        val json = Json.obj("data" -> reservaDTO)
+        val json = Json.toJson(reservaDTO)
         Ok(json)
-      })
+      }).recover{
+      case ex =>
+        logger.error("Ocurrio un error en el servicio Logger", ex)
+        InternalServerError("Ha ocurrido un error interno.")
+    }
   }
+
+  def crearReserva() = Action.async(parse.json){
+
+    request =>
+      val validar = request.body.validate[ReservaDTO]
+
+      validar.asEither match{
+        case Left(value) => Future.successful(BadRequest(value.toString))
+        case Right(value) => ProcesarReserva.crearReserva(value)
+          .map(reserva => {
+            val reservaDTO : ReservaDTO = reserva
+            val json = Json.obj("data" -> reservaDTO)
+            Ok(json)
+            }).recover{
+          case ex =>
+            logger.error("Ocurrio un error en el servicio Logger", ex)
+            InternalServerError("Ha ocurrido un error interno.")
+        }
+      }
+  }
+
+  def actualizarReserva() = Action.async(parse.json){
+
+    request =>
+      
+      val validar = request.body.validate[ReservaDTO]
+
+      validar.asEither match{
+        case Left(value) => Future.successful(BadRequest(value.toString))
+        case Right(value) => ActualizarReserva.actualizarReserva(value.id, value)
+          .map(reserva => {
+            val reservaDTO : ReservaDTO = reserva
+            val json = Json.obj("data" -> reservaDTO)
+            Ok(json)
+          }).recover{
+          case ex =>
+            logger.error("Ocurrio un error en el servicio Logger", ex)
+            InternalServerError("Ha ocurrido un error interno.")
+        }
+      }
+  }
+
+
 }

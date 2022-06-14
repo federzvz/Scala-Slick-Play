@@ -1,15 +1,26 @@
 package co.com.reservas.restaurantes.dominio.servicios
 
-import co.com.reservas.restaurantes.dominio.modelo.{Reserva, Reservada}
+import co.com.reservas.restaurantes.dominio.modelo.Reserva
+import co.com.reservas.restaurantes.infraestructura.basededatos.listaReservasDB
 
-import java.util.Date
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 trait ActualizarReserva {
 
-  def actualizarReserva(id : String, reserva : Reserva) : Future[Reserva] = Future{
-    Reserva("111","Nombre", new Date().toString, Reservada())
+  val dbReservasMockeada = listaReservasDB.listReservas;
+
+  def actualizarReserva(reserva : Reserva) : Future[Option[Reserva]] = Future{
+    if(!dbReservasMockeada.find(_.id == reserva.id).isEmpty){
+      val reservaModificada = dbReservasMockeada.find(_.id == reserva.id).get.copy(
+        nombre = reserva.nombre,
+        fechaReserva = reserva.fechaReserva,
+        estado = reserva.estado,
+      )
+      Some(reservaModificada)
+    }else{
+      None
+    }
   }
 
 }

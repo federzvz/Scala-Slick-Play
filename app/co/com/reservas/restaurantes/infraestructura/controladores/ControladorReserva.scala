@@ -34,9 +34,14 @@ class ControladorReserva @Inject() (val controllerComponents: ControllerComponen
 
     EliminarReserva.eliminarReserva(id)
       .map(reserva => {
-        val reservaDTO : ReservaDTO = reserva
-        val json = Json.toJson(reservaDTO)
-        Ok(json)
+        if(reserva.isEmpty){
+          NotFound("No se encontro la reserva")
+        }else{
+          val reservaDTO : ReservaDTO = reserva.get
+          val json = Json.toJson(reservaDTO)
+          Ok(json)
+        }
+
       }).recover{
       case ex =>
         logger.error("Ocurrio un error en el servicio Logger", ex)
@@ -67,16 +72,21 @@ class ControladorReserva @Inject() (val controllerComponents: ControllerComponen
   def actualizarReserva() = Action.async(parse.json){
 
     request =>
-      
+
       val validar = request.body.validate[ReservaDTO]
 
       validar.asEither match{
         case Left(value) => Future.successful(BadRequest(value.toString))
-        case Right(value) => ActualizarReserva.actualizarReserva(value.id, value)
+        case Right(value) => ActualizarReserva.actualizarReserva(value)
           .map(reserva => {
-            val reservaDTO : ReservaDTO = reserva
-            val json = Json.obj("data" -> reservaDTO)
-            Ok(json)
+            if(reserva.isEmpty){
+              NotFound("No se encontro la reserva")
+            }else{
+              val reservaDTO : ReservaDTO = reserva.get
+              NotFound("No se encontro la reserva")
+              val json = Json.obj("data" -> reservaDTO)
+              Ok(json)
+            }
           }).recover{
           case ex =>
             logger.error("Ocurrio un error en el servicio Logger", ex)

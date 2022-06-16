@@ -1,20 +1,21 @@
 package co.com.reservas.restaurantes.dominio.servicios
 
 import co.com.reservas.restaurantes.dominio.modelo.Reserva
-import co.com.reservas.restaurantes.infraestructura.basededatos.listaReservasDB
+import co.com.reservas.restaurantes.infraestructura.basededatos.listaReservasDB.listReservas
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 trait ObtenerReserva {
 
-  val dbReservasMockeada = listaReservasDB.listReservas;
-
   def obtenerReserva(id : String) : Future[Option[Reserva]] = Future{
-    if(!dbReservasMockeada.find(_.id == id).isEmpty){
-      Some(dbReservasMockeada.find(_.id == id).get)
-    }else{
-      None
+    val isReservaRequerida = !listReservas.find(_.id == id).isEmpty
+    isReservaRequerida match {
+      case true =>{
+        val reservaRequerida = listReservas.find(_.id == id).get
+        Some(reservaRequerida)
+      }
+      case false => None
     }
   }
 

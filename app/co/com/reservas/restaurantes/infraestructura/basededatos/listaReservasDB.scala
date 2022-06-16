@@ -5,7 +5,7 @@ import co.com.reservas.restaurantes.dominio.modelo.{Rechazado, Reserva, Reservad
 import java.util.Date
 
 object listaReservasDB {
-  val listReservas = List(
+  var listReservas = List(
     Reserva("1","Cita 1 Pepe", new Date().toString, Reservada()),
     Reserva("2","Cita 2 Carlos", new Date().toString, SinEstado()),
     Reserva("3","Cita 3 Jose", new Date().toString, Rechazado()),

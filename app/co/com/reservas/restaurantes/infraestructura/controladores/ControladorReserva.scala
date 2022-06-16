@@ -1,6 +1,7 @@
 package co.com.reservas.restaurantes.infraestructura.controladores
 
-import co.com.reservas.restaurantes.dominio.servicios.{ActualizarReserva, EliminarReserva, ObtenerReserva, ProcesarReserva}
+import co.com.reservas.restaurantes.dominio.modelo.Reserva
+import co.com.reservas.restaurantes.dominio.servicios.{ActualizarReserva, EliminarReserva, ObtenerReserva, ObtenerTodasReservas, ProcesarReserva}
 import co.com.reservas.restaurantes.infraestructura.controladores.dto.ReservaDTO
 import play.api.Logger
 import play.api.libs.json.Json
@@ -97,6 +98,21 @@ class ControladorReserva @Inject() (val controllerComponents: ControllerComponen
             InternalServerError("Ha ocurrido un error interno.")
         }
       }
+  }
+
+  def obtenerTodasReservas() = Action.async{
+    ObtenerTodasReservas
+      .obtenerTodasReservas.map(reservaOpt => {
+        reservaOpt.map(reserva => {
+          val listReservaDTO : List[ReservaDTO] = reserva : List[Reserva]
+          val json = Json.obj("data" -> listReservaDTO)
+          Ok(json)
+        }).getOrElse(NotFound("No se encontro la reserva"))
+      }).recover{
+      case ex =>
+        logger.error("Ocurrio un error en el servicio Logger", ex)
+        InternalServerError("Ha ocurrido un error interno.")
+    }
   }
 
 

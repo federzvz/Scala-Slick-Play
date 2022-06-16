@@ -7,3 +7,4 @@ GET     /api/reservas/:id          co.com.reservas.restaurantes.infraestructura.
 POST     /api/reservas            co.com.reservas.restaurantes.infraestructura.controladores.ControladorReserva.crearReserva
 PUT     /api/reservas           co.com.reservas.restaurantes.infraestructura.controladores.ControladorReserva.actualizarReserva
 DELETE /api/reservas/:id          co.com.reservas.restaurantes.infraestructura.controladores.ControladorReserva.eliminarReserva(id: String)
+GET     /api/reservas          co.com.reservas.restaurantes.infraestructura.controladores.ControladorReserva.obtenerTodasReservas

@@ -1,3 +1,5 @@
 package co.com.reservas.restaurantes.infraestructura.controladores.dto
 
-case class ReservaDTO(id: String, nombre : String, fechaReserva: String, estado : String)
+import co.com.reservas.restaurantes.dominio.modelo.value.types.{Estado, Fecha, Identificador, NombreReserva}
+
+case class ReservaDTO(id: Identificador, nombre : NombreReserva, fechaReserva: Fecha, estado : Estado)

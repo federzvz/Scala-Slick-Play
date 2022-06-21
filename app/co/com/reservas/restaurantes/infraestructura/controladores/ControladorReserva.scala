@@ -34,15 +34,12 @@ class ControladorReserva @Inject() (val controllerComponents: ControllerComponen
   def eliminarReserva(id : String) = Action.async{
 
     EliminarReserva.eliminarReserva(id)
-      .map(reserva => {
-        if(reserva.isEmpty){
-          NotFound("No se encontro la reserva")
-        }else{
-          val reservaDTO : ReservaDTO = reserva.get
+      .map(reservaOpt => {
+        reservaOpt.map(r => {
+          val reservaDTO : ReservaDTO = r
           val json = Json.toJson(reservaDTO)
-          Ok(json)
-        }
-
+          Ok("Reserva eliminada con éxito.")
+        }).getOrElse(NotFound("No se encontro la reserva"))
       }).recover{
       case ex =>
         logger.error("Ocurrio un error en el servicio Logger", ex)
@@ -58,14 +55,12 @@ class ControladorReserva @Inject() (val controllerComponents: ControllerComponen
       validar.asEither match{
         case Left(value) => Future.successful(BadRequest(value.toString))
         case Right(value) => ProcesarReserva.crearReserva(value)
-          .map(reserva => {
-            if(reserva.isEmpty) {
-              NotFound("Ya existe una reserva con ese id")
-            }else{
-              val reservaDTO : ReservaDTO = reserva.get
+          .map(reservaOpt => {
+            reservaOpt.map(r => {
+              val reservaDTO : ReservaDTO = r
               val json = Json.obj("data" -> reservaDTO)
               Ok(json)
-            }
+            }).getOrElse(NotFound("Ya existe una reserva con ese id"))
             }).recover{
           case ex =>
             logger.error("Ocurrio un error en el servicio Logger", ex)
@@ -83,15 +78,12 @@ class ControladorReserva @Inject() (val controllerComponents: ControllerComponen
       validar.asEither match{
         case Left(value) => Future.successful(BadRequest(value.toString))
         case Right(value) => ActualizarReserva.actualizarReserva(value)
-          .map(reserva => {
-            if(reserva.isEmpty){
-              NotFound("No se encontro la reserva")
-            }else{
-              val reservaDTO : ReservaDTO = reserva.get
-              NotFound("No se encontro la reserva")
+          .map(reservaOpt => {
+            reservaOpt.map(r => {
+              val reservaDTO : ReservaDTO = r
               val json = Json.obj("data" -> reservaDTO)
               Ok(json)
-            }
+            }).getOrElse(NotFound("No se encontro la reserva"))
           }).recover{
           case ex =>
             logger.error("Ocurrio un error en el servicio Logger", ex)

@@ -13,8 +13,7 @@ package object controladores {
   }
 
   implicit def convertirAListDTO(listReserva : List[Reserva]) = {
-    var listReservasDTO : List[ReservaDTO] = List()
-    listReserva.foreach(r => {listReservasDTO = listReservasDTO.appended(ReservaDTO(r.id,r.nombre,r.fechaReserva,r.estado.toString))})
+    val listReservasDTO : List[ReservaDTO] = listReserva.map(r => ReservaDTO(r.id,r.nombre,r.fechaReserva,r.estado.toString)).toList
     listReservasDTO
   }
 

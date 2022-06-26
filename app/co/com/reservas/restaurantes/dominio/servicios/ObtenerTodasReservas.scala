@@ -7,14 +7,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 trait ObtenerTodasReservas {
-  def obtenerTodasReservas: Future[Option[List[Reserva]]] = Future{
-    val isListReservaVacia = listReservas.isEmpty
-    isListReservaVacia match {
-      case true => None
-      case false => {
-        Some(listReservas)
-      }
-    }
+  def obtenerTodasReservas: Future[List[Reserva]] = Future{
+    listReservas
   }
 }
 

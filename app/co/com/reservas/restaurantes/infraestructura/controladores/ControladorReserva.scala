@@ -94,12 +94,10 @@ class ControladorReserva @Inject() (val controllerComponents: ControllerComponen
 
   def obtenerTodasReservas() = Action.async{
     ObtenerTodasReservas
-      .obtenerTodasReservas.map(reservaOpt => {
-        reservaOpt.map(reserva => {
-          val listReservaDTO : List[ReservaDTO] = reserva : List[Reserva]
-          val json = Json.obj("data" -> listReservaDTO)
-          Ok(json)
-        }).getOrElse(NotFound("No se encontro la reserva"))
+      .obtenerTodasReservas.map(reserva => {
+      val listReservaDTO : List[ReservaDTO] = reserva : List[Reserva]
+      val json = Json.obj("data" -> listReservaDTO)
+      Ok(json)
       }).recover{
       case ex =>
         logger.error("Ocurrio un error en el servicio Logger", ex)

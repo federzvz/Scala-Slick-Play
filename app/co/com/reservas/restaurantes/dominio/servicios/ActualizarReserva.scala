@@ -8,7 +8,7 @@ import scala.concurrent.Future
 
 trait ActualizarReserva {
 
-  def actualizarReserva(reserva : Reserva) : Future[Option[Reserva]] = Future{
+  def actualizarReserva(reserva : Reserva) : Future[Option[Reserva]] = Future{ //Future Either(String || Reserva)
     val isReservaRequerida = !listReservas.find(_.id == reserva.id).isEmpty
     isReservaRequerida match {
       case true =>
